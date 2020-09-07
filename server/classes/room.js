@@ -85,14 +85,14 @@ class Room {
   }
 
   generateDeliveryVsAverage() {
-    let deliveryTerms = this.rounds.map(round => {
-      let playersDelay =  round.results.map(res => res.delay);
-      return playersDelay.reduce((a,b)=>a+b)/round.results.length;
-    });
-
     let individualAverage = this.rounds.map(round => {
-      return round.results[round.results.length-1].delay
-    });
+      let playersDelay =  round.results.map(res => res.deliveryTerm);
+      return playersDelay.reduce((a,b)=>a+b)/round.results.length;
+    }).reverse();
+
+    let deliveryTerms = this.rounds.map(round => {
+      return round.results[round.results.length-1].receptionTime
+    }).reverse();
 
     let termVsCost = {
       results: this.players.map(player => {
@@ -100,7 +100,7 @@ class Room {
           player,
           values: this.rounds.map(round => {
             return round.results.find(res => res.player.id === player.id).deliveryTerm;
-          })
+          }).reverse()
         }
       }),
       deliveryTerms,

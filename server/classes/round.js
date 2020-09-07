@@ -9,16 +9,16 @@ class Round {
     this.results.push({
       player,
       initWait: time,
-      delay: null,
+      receptionTime: null,
       deliveryTerm: null
     })
   }
-  addResultEnd(player, deliveryTerm) {
-    let time = deliveryTerm.millis / 1000;
+  addResultEnd(player, receptionTime) {
+    let time = receptionTime.millis / 1000;
     let resultIndex = this.results.findIndex(res => res.player.id === player.id);
     if(resultIndex > -1) {
-      this.results[resultIndex].deliveryTerm = time;
-      this.results[resultIndex].delay = time - this.results[resultIndex].initWait;
+      this.results[resultIndex].receptionTime = time;
+      this.results[resultIndex].deliveryTerm = time - this.results[resultIndex].initWait;
     }
   }
 }
