@@ -1,0 +1,22 @@
+{
+  "name": "backend-penny-game",
+  "version": "1.0.0",
+  "description": "This project is a web sockt server implementation for the 4agile penny game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon server/server.js"
+  },
+  "author": "Abraham Cerda Iturra (abraham.cerdaiturra@gmail.com)",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  }
+}

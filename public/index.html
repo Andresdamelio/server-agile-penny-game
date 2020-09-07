@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Socket server</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body class="bg-light">
+    <header class="container-fluid bg-dark text-light">
+        <h1 class="display-4">Socket server</h1>
+    </header>
+    <main class="container mt-0">
+        <h4>Events</h4>
+        <ul>
+            <li>Create room
+                <p>
+                    <input class="form-control d-inline w-auto" id="room_size" type="number" placeholder="Size room (number players)">
+                    <button class="btn btn-primary mr-3 align-top" onclick="new_room()">New Room</button> <br>
+                    Room Id: <a id="code_room" href="#" target="_blank"></a>
+                </p>
+            </li>
+            <li>Join room
+                <p>
+                    <input class="form-control d-inline w-auto" id="name_player" type="text" placeholder="Name player">
+                    <button class="btn btn-primary mr-3 align-top" onclick="join_room()">Join Room</button><br>
+                    Players: <span id="players_room"></span>
+                </p>
+            </li>
+            <li>Init round
+                <p>
+                    <button class="btn btn-primary mr-3 align-top" onclick="init_round()">Init round</button><br>
+                    Players: <span id="info_round"></span>
+                </p>
+            </li>
+        </ul>
+    </main>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        var socket = io();
+        let name = 'Sin nombre';
+        let roomId = urlParams.get('room') ||"";
+        let players = [];
+        
+
+         function new_room(){
+            let roomSize = parseInt(document.querySelector('#room_size').value)
+            console.log(roomSize)
+            socket.emit('newRoom',roomSize, function(res){
+                if(res.ok){
+                    roomId = res.room.id;
+                    console.info("Sala creada", res.room)
+                    document.querySelector('#code_room').innerHTML = roomId;
+                    document.querySelector('#code_room').href = `?room=${roomId}`;
+                } else {
+                    console.error("Algo salió mal, no se pudo crear la sala");
+                }
+            });
+        }
+
+        function join_room(){
+            name = document.querySelector('#name_player').value
+            socket.emit('joinRoom', {name, roomId}, function(res){
+                if(res.ok){
+                    players = res.room.players;
+                    console.info(`${name} se ha unido a la sala ${roomId}`)
+                    document.querySelector('#players_room').innerHTML = players.map(el => el.name).join(', ');
+                } else {
+                    console.error(res.error);
+                }
+            });
+        }
+
+        function init_round(){
+            socket.emit('initRound', roomId)
+        }
+
+        socket.on('INIT_ROUND', (round) => {
+            alert(`Ronda ${round} iniciada`)
+        })
+        
+        socket.on('NEW_PLAYER', (room) => {
+            document.querySelector('#players_room').innerHTML = room.players.map(el => el.name).join(', ');
+            console.log(`${room.players[room.players.length -1].name} se ha unido a la sala ${room.id}`)
+        })
+
+    </script>
+</body>
+</html>
