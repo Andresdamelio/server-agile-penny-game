@@ -13,7 +13,7 @@ class Room {
     let round1 = new Round(1, 20),
       round2 = new Round(2, 10),
       round3 = new Round(3, 5),
-      round4 = new Round(4, 2);
+      round4 = new Round(4, 1);
     return [round1, round2, round3, round4];
   }
   addPlayer(player) {
