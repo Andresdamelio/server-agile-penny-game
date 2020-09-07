@@ -88,11 +88,11 @@ class Room {
     let deliveryTerms = this.rounds.map(round => {
       let playersDelay =  round.results.map(res => res.delay);
       return playersDelay.reduce((a,b)=>a+b)/round.results.length;
-    }).reverse();
+    });
 
     let individualAverage = this.rounds.map(round => {
       return round.results[round.results.length-1].delay
-    }).reverse();
+    });
 
     let termVsCost = {
       results: this.players.map(player => {
@@ -100,12 +100,12 @@ class Room {
           player,
           values: this.rounds.map(round => {
             return round.results.find(res => res.player.id === player.id).deliveryTerm;
-          }).reverse()
+          })
         }
       }),
       deliveryTerms,
       individualAverage,
-      chartLabels: ["Lotes de 5", "Lotes de 10", "Lotes de 20"],
+      chartLabels: ["Lotes de 1","Lotes de 5", "Lotes de 10", "Lotes de 20"],
       chartData: [
         {
           label: "Promedio individual",
