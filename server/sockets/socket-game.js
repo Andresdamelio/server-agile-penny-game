@@ -1,12 +1,12 @@
+const shuffle = require('lodash/shuffle');
 const { io, rooms } = require('../server');
 const { Room } = require('../classes/room');
 const { Player } = require('../classes/player');
-const { searchRoomsPlayer } = require('../utils/utils');
+const { searchRoomsPlayer, getRandomInt } = require('../utils/utils');
 
 
 io.on('connection', (client) => {
 
-  console.log("New client on")
   client.on('disconnecting', () => {
     let roomsPlayer = searchRoomsPlayer(client.id);
     if (roomsPlayer.length) {
@@ -72,15 +72,15 @@ io.on('connection', (client) => {
     client.to(roomId).emit('START_COUNTER');
   })
 
-  client.on('saveResult', ({roomId, time, type}) => {
+  client.on('saveResult', ({ roomId, time, type, id }) => {
     let room = rooms.find(room => room.id === roomId);
     let round = room.rounds[room.actualRound];
-    if(type === 'init')
-      round.addResultInit(room.getPlayer(client.id), time);
+    if (type === 'init')
+      round.addResultInit(room.getPlayer(id), time);
     else
-      round.addResultEnd(room.getPlayer(client.id), time);
+      round.addResultEnd(room.getPlayer(id), time);
 
-    if (room.isLastPlayer(client.id) && room.isEndCurrentRound(client.id)) {
+    if (room.isLastPlayer(id) && room.isEndCurrentRound(id)) {
       room.nextRound()
       client.emit('STOP_COUNTER')
       client.to(roomId).emit('STOP_COUNTER')
@@ -108,20 +108,90 @@ io.on('connection', (client) => {
 
   client.on('moveCoins', ({ roomId }) => {
     let room = rooms.find(room => room.id === roomId);
-    let player = room.getPlayer(client.id);
+    let player = room.getPlayer(client.id); 
 
-    player.setMovedCoins();
-    player.cleanSelectedCoins();
+    const moveCoins = (player) => {
+      let playerSelectedCoins = player.selectedCoins;
+      player.setMovedCoins();
+      player.cleanSelectedCoins();
 
-    client.emit("UPDATE_PLAYER", player);
-    client.to(roomId).emit("UPDATE_PLAYER", player);
+      client.emit("UPDATE_PLAYER", player);
+      client.to(roomId).emit("UPDATE_PLAYER", player);
+
+      let nextPlayer = room.getPlayerNext(player.id);
+      if (nextPlayer.isAuto) {
+        client.emit("MOVING_AUTO_PLAYER", {player: nextPlayer.id, status: false});
+
+        nextPlayer.coinsCanMove = shuffle([...nextPlayer.coinsCanMove, ...playerSelectedCoins]);
+
+        const autoPlay = (client, nextPlayer) => {
+
+          let sizeLot = room.rounds[room.actualRound].sizeLot;
+
+          let moveAutoCoins = (sizeLot) => {
+
+            if (sizeLot <= 0) {
+              moveCoins(nextPlayer);
+              client.emit("MOVING_AUTO_PLAYER", {player: nextPlayer.id, status: true});
+              return
+            }
+
+            let coinSelected = nextPlayer.coinsCanMove.pop()
+            nextPlayer.addSelectedCoin(coinSelected);
+            setTimeout(() => {
+
+              client.to(roomId).emit("MOVE_COIN", {
+                player: nextPlayer,
+                coin: { ...coinSelected, playerId: nextPlayer.id }
+              });
+              client.emit("MOVE_COIN", {
+                player: nextPlayer,
+                coin: { ...coinSelected, playerId: nextPlayer.id }
+              });
+              sizeLot--;
+
+              moveAutoCoins(sizeLot)
+
+            }, getRandomInt(200, 700))
+          }
+          moveAutoCoins(sizeLot);
+        }
+        autoPlay(client, nextPlayer);
+      }
+    }
+
+    moveCoins(player);
+
   });
 
-  client.on('endGame', ({roomId}) => {
+  client.on('endGame', ({ roomId }) => {
     client.emit('GAME_FINISHED');
     client.to(roomId).emit('GAME_FINISHED');
   })
 
+  client.on('createAutoPlayers', ({ roomId }) => {
+    let room = rooms.find(room => room.id === roomId);
+    let newPlayers = room.createAutoPlayers();
+
+    client.emit('NEW_PLAYER', {
+      room,
+    })
+
+    client.to(roomId).emit('NEW_PLAYER', {
+      room,
+    })
+
+    for (player of newPlayers) {
+
+      client.emit('SHOW_NOTIFY', {
+        notify: { show: true, title: "Nuevo jugador", message: `${player.name} se ha unido a la sala` },
+      })
+
+      client.to(roomId).emit('SHOW_NOTIFY', {
+        notify: { show: true, title: "Nuevo jugador", message: `${player.name} se ha unido a la sala` },
+      })
+    }
+  })
 })
 
 module.exports = {

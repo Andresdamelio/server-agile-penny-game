@@ -6,6 +6,11 @@ const searchRoomsPlayer = (id) => {
   })
 }
 
+const getRandomInt = (min, max) => {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
 module.exports = {
-  searchRoomsPlayer
+  searchRoomsPlayer,
+  getRandomInt
 }
