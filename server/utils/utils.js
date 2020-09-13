@@ -10,7 +10,18 @@ const getRandomInt = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+const getNotify = (title, message) => {
+  return {
+    notify: {
+      show: true,
+      title: title,
+      message: message
+    }
+  }
+}
+
 module.exports = {
   searchRoomsPlayer,
-  getRandomInt
+  getRandomInt,
+  getNotify
 }
