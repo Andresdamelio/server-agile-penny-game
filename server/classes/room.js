@@ -162,7 +162,7 @@ class Room {
       let playersMissing = this.size - playersQuantity;
       for (let i = 1; i <= playersMissing; i++) {
         this.players.push(
-          new Player(playersQuantity + i, `Player ${playersQuantity + i}`, true)
+          new Player(playersQuantity + i, `Bot ${playersQuantity + i}`, true)
         );
       }
     }

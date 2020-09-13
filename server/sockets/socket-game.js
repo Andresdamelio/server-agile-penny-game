@@ -157,7 +157,7 @@ io.on("connection", (client) => {
             let coinSelected = nextPlayer.coinsCanMove.pop();
             nextPlayer.addSelectedCoin(coinSelected);
             size--;
-            setTimeout(() => {
+
               client.to(roomId).emit("MOVE_COIN", {
                 player: nextPlayer,
                 coin: { ...coinSelected, playerId: nextPlayer.id },
@@ -168,9 +168,12 @@ io.on("connection", (client) => {
               });
 
               if (nextPlayer.coinsCanMove.length >= 0) {
-                moveAutoCoins(size);
+                setTimeout(()=>{
+
+                  moveAutoCoins(size);
+                },getRandomInt(200, 700))
               }
-            }, getRandomInt(200, 700));
+
           };
           if (nextPlayer.selectedCoins <= 0) {
             moveAutoCoins(sizeLot);
