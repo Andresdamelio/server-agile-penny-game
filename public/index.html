@@ -47,11 +47,9 @@
 
          function new_room(){
             let roomSize = parseInt(document.querySelector('#room_size').value)
-            console.log(roomSize)
             socket.emit('newRoom',roomSize, function(res){
                 if(res.ok){
                     roomId = res.room.id;
-                    console.info("Sala creada", res.room)
                     document.querySelector('#code_room').innerHTML = roomId;
                     document.querySelector('#code_room').href = `?room=${roomId}`;
                 } else {
@@ -65,7 +63,6 @@
             socket.emit('joinRoom', {name, roomId}, function(res){
                 if(res.ok){
                     players = res.room.players;
-                    console.info(`${name} se ha unido a la sala ${roomId}`)
                     document.querySelector('#players_room').innerHTML = players.map(el => el.name).join(', ');
                 } else {
                     console.error(res.error);
@@ -83,7 +80,6 @@
         
         socket.on('NEW_PLAYER', (room) => {
             document.querySelector('#players_room').innerHTML = room.players.map(el => el.name).join(', ');
-            console.log(`${room.players[room.players.length -1].name} se ha unido a la sala ${room.id}`)
         })
 
     </script>

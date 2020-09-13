@@ -143,9 +143,7 @@ io.on("connection", (client) => {
 
             if (size <= 0) {
               size = room.rounds[room.actualRound].sizeLot;
-              if (nextPlayer.selectedCoins.length % sizeLot) {
-                console.log("CANTIDAD INVALIDA");
-              }
+
               moveCoins(nextPlayer);
               client.emit("MOVING_AUTO_PLAYER", {
                 player: nextPlayer.id,
@@ -159,7 +157,6 @@ io.on("connection", (client) => {
             let coinSelected = nextPlayer.coinsCanMove.pop();
             nextPlayer.addSelectedCoin(coinSelected);
             size--;
-            console.log("size", size);
             setTimeout(() => {
               client.to(roomId).emit("MOVE_COIN", {
                 player: nextPlayer,
