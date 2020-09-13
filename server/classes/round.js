@@ -7,12 +7,15 @@ class Round {
 
   addResultInit(player, initWait) {
     let time = initWait ? initWait.millis / 1000 : 0;
-    this.results.push({
-      player,
-      initWait: time,
-      receptionTime: null,
-      deliveryTerm: null,
-    });
+
+    if (!this.results.find((result) => result.player.id == player.id)) {
+      this.results.push({
+        player,
+        initWait: time,
+        receptionTime: null,
+        deliveryTerm: null,
+      });
+    }
   }
 
   addResultEnd(player, receptionTime) {
