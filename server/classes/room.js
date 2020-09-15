@@ -76,28 +76,27 @@ class Room {
 
   generateResumeRounds() {
     let tableResults = this.rounds.map((round) => {
+
       return {
         number: round.number,
         sizeLot: round.sizeLot,
-        results: round.results,
+        results: round.results.reverse(),
         chartLabels: round.results
           .slice()
-          .reverse()
           .map((res) => res.player.name),
         chartData: [
           {
             label: "Espera inicial",
-            backgroundColor: "#ffecb3",
-            borderColor: "#e64a19",
+            backgroundColor: "#baece9",
+            borderColor: "#00A99D",
             borderWidth: 1,
             data: round.results
               .slice()
-              .reverse()
               .map((res) => res.initWait),
           },
           {
             label: "Plazo de entrega",
-            backgroundColor: "#e64a19",
+            backgroundColor: "#00A99D",
             data: round.results
               .slice()
               .reverse()
@@ -147,7 +146,7 @@ class Room {
         },
         {
           label: "Plazo de entrega",
-          borderColor: "#e64a19",
+          borderColor: "#00A99D",
           lineTension: 0.2,
           data: deliveryTerms,
         },
