@@ -9,6 +9,7 @@ class Room {
     this.size = size;
     this.rounds = this.createRounds();
     this.actualRound = 0;
+    this.createdAt = new Date();
   }
 
   createRounds() {
