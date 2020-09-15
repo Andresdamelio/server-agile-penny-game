@@ -80,9 +80,9 @@ class Room {
       return {
         number: round.number,
         sizeLot: round.sizeLot,
-        results: round.results.reverse(),
+        results: round.results.slice().reverse(),
         chartLabels: round.results
-          .slice()
+          .slice().reverse()
           .map((res) => res.player.name),
         chartData: [
           {
@@ -91,15 +91,14 @@ class Room {
             borderColor: "#00A99D",
             borderWidth: 1,
             data: round.results
-              .slice()
+              .slice().reverse()
               .map((res) => res.initWait),
           },
           {
             label: "Plazo de entrega",
             backgroundColor: "#00A99D",
             data: round.results
-              .slice()
-              .reverse()
+              .slice().reverse()
               .map((res) => res.deliveryTerm),
           },
         ],
