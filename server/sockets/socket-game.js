@@ -171,7 +171,7 @@ io.on("connection", (client) => {
                 setTimeout(()=>{
 
                   moveAutoCoins(size);
-                },getRandomInt(200, 700))
+                }, size <= 0 ? 1000 : getRandomInt(300, 700))
               }
 
           };
