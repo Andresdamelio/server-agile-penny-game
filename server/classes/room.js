@@ -88,8 +88,8 @@ class Room {
         chartData: [
           {
             label: "Espera inicial",
-            backgroundColor: "#baece9",
-            borderColor: "#00A99D",
+            backgroundColor: "#54a4dd",
+            borderColor: "#17598a",
             borderWidth: 1,
             data: round.results
               .slice().reverse()
@@ -97,7 +97,7 @@ class Room {
           },
           {
             label: "Plazo de entrega",
-            backgroundColor: "#00A99D",
+            backgroundColor: "#17598a",
             data: round.results
               .slice().reverse()
               .map((res) => res.deliveryTerm),
@@ -146,7 +146,7 @@ class Room {
         },
         {
           label: "Plazo de entrega",
-          borderColor: "#00A99D",
+          borderColor: "#17598a",
           lineTension: 0.2,
           data: deliveryTerms,
         },
